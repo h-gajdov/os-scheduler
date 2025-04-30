@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <label>
+        Algorithm:
+        <select id="dropdown-algorithm">
+            <option value="fifo">First-Come First-Served</option>
+            <option value="srtn">Shortest Remaining Time Next</option>
+            <option value="rr">Round Robin</option>
+            <option value="mfq">Multilevel Feedback Queues</option>
+        </select>
+    </label>
+    
+    <label>
+        Processes:
+        <input id="processes" type="text" placeholder="A B C D E...">
+    </label>
+
+    <label>
+        Time of arrival:
+        <input id="tarrival" type="text" placeholder="1 2 3 4 5...">
+    </label>
+
+    <label>
+        Execution time:
+        <input id="texecution" type="text" placeholder="1 2 3 4 5...">
+    </label>
+    
+    <button onclick="solve()">Solve</button>
+
+    <div id="result-container">
+        <div id="box-container">
+<!--            <div class="empty"></div>-->
+<!--            <div class="box">-->
+<!--                <span class="label">A</span>-->
+<!--                <span class="start-time">1</span>-->
+<!--                <span class="end-time">2</span>-->
+<!--            </div>-->
+<!--            <div class="box">-->
+<!--                <span class="label">B</span>-->
+<!--                <span class="start-time">2</span>-->
+<!--                <span class="end-time">3</span>-->
+<!--            </div>-->
+<!--            <div class="box">-->
+<!--                <span class="label">C</span>-->
+<!--                <span class="start-time">3</span>-->
+<!--                <span class="end-time">4</span>-->
+<!--            </div>-->
+<!--            <div class="box">-->
+<!--                <span class="label">D</span>-->
+<!--                <span class="start-time">4</span>-->
+<!--                <span class="end-time">5</span>-->
+<!--            </div>-->
+<!--            <div class="box">-->
+<!--                <span class="label">E</span>-->
+<!--                <span class="start-time">5</span>-->
+<!--                <span class="end-time">6</span>-->
+<!--            </div>-->
+        </div>
+        <div id="line"></div>
+    </div>
+
+    <script src="data-structures.js"></script>
+    <script src="process.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
