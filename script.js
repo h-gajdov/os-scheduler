@@ -107,12 +107,15 @@ function roundrobin(processes) {
         for(let i = 0; i < processes.length; i++) {
             if(time === processes[i].arrival) {
                 arr.push(processes[i]);
+                if(arr.indexOf(next) === 0) {
+                    next = arr[arr.length - 1];
+                }
             }
         }
 
         if(arr.length === 0) {
             let lastSeq = sequence.peek();
-            if(lastSeq == null || lastSeq.process == null)
+            if(lastSeq == null || !next && lastSeq.process !== null)
                 sequence.push(new SequenceNode(null, time, time));
             sequence.peek().endTime++;
 
@@ -122,20 +125,27 @@ function roundrobin(processes) {
             if(next == null) next = arr[0];
         }
 
-        if(nowExecuting == null || nowExecuting.time === 0 || sequence.peek() !== null && sequence.peek().executionTime() === q) {
+        if(nowExecuting == null || nowExecuting.time === 0 || sequence.peek() !== null && (sequence.peek().executionTime() === q)) {
             let newNext = (arr.indexOf(next) + 1) % arr.length;
             nowExecuting = next;
             sequence.push(new SequenceNode(nowExecuting, time, time));
-            next = arr[newNext];
+
+            if(arr[newNext] === next) {
+                next = null;
+            } else {
+                next = arr[newNext]
+            }
         }
 
         sequence.peek().endTime++;
-        nowExecuting.time--;
-        if(nowExecuting.time === 0) {
-            let i1 = arr.indexOf(nowExecuting);
-            let i2 = processes.indexOf(nowExecuting);
-            if(i1 !== -1) arr.splice(i1, 1);
-            if(i2 !== -1) processes.splice(i1, 1);
+        if(nowExecuting) {
+            nowExecuting.time--;
+            if(nowExecuting.time === 0) {
+                let i1 = arr.indexOf(nowExecuting);
+                let i2 = processes.indexOf(nowExecuting);
+                if(i1 !== -1) arr.splice(i1, 1);
+                if(i2 !== -1) processes.splice(i1, 1);
+            }
         }
         time++;
     }
@@ -164,6 +174,10 @@ function solve() {
         for(let j = i + 1; j < lprocesses.length; j++) {
             if(lprocesses[idx].arrival > lprocesses[j].arrival) {
                 idx = j;
+            } else if(lprocesses[idx].arrival === lprocesses[j].arrival) {
+                if(lprocesses[idx].name.localeCompare(lprocesses[idx].name < 0)) {
+                    idx = j;
+                }
             }
         }
         let tmp = lprocesses[i];
