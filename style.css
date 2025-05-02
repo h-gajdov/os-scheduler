@@ -1,3 +1,7 @@
+body {
+    border-collapse: collapse;
+}
+
 label {
     display: block;
 }
@@ -24,6 +28,7 @@ label {
     align-items: center;
 
     border: 1px solid black;
+    border-bottom: 0;
     background: lightgrey;
     width: auto;
     min-width: 32px;
@@ -48,4 +53,19 @@ label {
 
 .end-time {
     padding-left: 5px;
+}
+
+table {
+    margin: 10% auto;
+    border-collapse: collapse;
+}
+
+th {
+    background-color: lightgrey;
+}
+
+tr, th, td {
+    border: 1px solid black;
+    text-align: center;
+    padding: 5px;
 }

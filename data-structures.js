@@ -124,14 +124,48 @@ class SequenceNode {
 class Sequence {
     constructor() {
         this.sequence = [];
+        this.hash = new Map();
     }
 
     push(node) {
         this.sequence.push(node)
+        if(!this.hash.has(node.process)) {
+            this.hash.set(node.process, []);
+        }
+        this.hash.get(node.process).push(node);
     }
 
     peek() {
         return this.sequence[this.sequence.length - 1];
+    }
+
+    getProcesses() {
+        let set = new Set();
+        for(let i = 0; i < this.sequence.length; i++) {
+            if(this.sequence[i].process == null) continue;
+            set.add(this.sequence[i].process);
+        }
+        return Array.from(set);
+    }
+
+    getResponseTimeOfProcess(process) {
+        return this.hash.get(process)[0].startTime - process.arrival;
+    }
+
+    getWaitingTimeOfProcess(process) {
+        let sequences = this.hash.get(process);
+        let result = sequences[0].startTime;
+        for(let i = 0; i < sequences.length - 1; i++) {
+            result += sequences[i + 1].startTime - sequences[i].endTime;
+        }
+        return result;
+    }
+
+    getTurnaroundTimeOfProcess(process) {
+        let arrival = process.arrival;
+        let sequences = this.hash.get(process);
+        let lastAppearance = sequences[sequences.length - 1];
+        return lastAppearance.endTime - arrival;
     }
 
     print() {

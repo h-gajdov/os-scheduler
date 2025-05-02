@@ -301,5 +301,26 @@ function showResult(sequence) {
         }
         boxContainer.appendChild(div);
     }
-    console.log(sequence)
+    fillTable(sequence);
+}
+
+function fillTable(sequence) {
+    let table = document.querySelector('table');
+    let processes = sequence.getProcesses();
+
+    //clear table
+    table.innerHTML =`<tr><th>Process</th><th>Response Time</th><th>Waiting Time</th><th>Turnaround Time</th></tr>`
+
+    for(let i = 0; i < processes.length; i++) {
+        let proc = processes[i];
+        let turnaround = sequence.getTurnaroundTimeOfProcess(proc);
+        let waiting = sequence.getWaitingTimeOfProcess(proc);
+        let response = sequence.getResponseTimeOfProcess(proc)
+        table.innerHTML += `
+            <td>${processes[i].name}</td>
+            <td>${response}</td>
+            <td>${waiting}</td>
+            <td>${turnaround}</td>
+        `
+    }
 }
