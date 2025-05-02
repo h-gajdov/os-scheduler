@@ -13,7 +13,7 @@
             <option value="fifo">First-Come First-Served</option>
             <option value="srtn">Shortest Remaining Time Next</option>
             <option value="rr">Round Robin</option>
-            <option value="mfq">Multilevel Feedback Queues</option>
+            <option value="mlfq">Multilevel Feedback Queues</option>
         </select>
     </label>
     
@@ -31,7 +31,29 @@
         Execution time:
         <input id="texecution" type="text" placeholder="1 2 3 4 5...">
     </label>
-    
+
+    <div hidden id="rr-quantum-div">
+        <label>
+            Quantum:
+            <input id="rr-quantum" type="number" placeholder="1">
+        </label>
+    </div>
+
+    <div id="mlfq-quantum-div" hidden>
+        <label>
+            Quantum for Q0:
+            <input id="q0" type="number" placeholder="1">
+        </label>
+        <label>
+            Quantum for Q1:
+            <input id="q1" type="number" placeholder="1">
+        </label>
+        <label>
+            FIFO:
+            <input id="is-fifo" type="checkbox">
+        </label>
+    </div>
+
     <button onclick="solve()">Solve</button>
 
     <div id="result-container">

@@ -4,9 +4,25 @@ const tarrival = document.getElementById('tarrival');
 const texecution = document.getElementById('texecution');
 const resultContainer = document.getElementById('result-container');
 const boxContainer = document.getElementById('box-container');
+const rrquantumInput = document.getElementById('rr-quantum');
+
+algorithmSelect.addEventListener('change', (e) => {
+    const rr = document.getElementById('rr-quantum-div');
+    const ml = document.getElementById('mlfq-quantum-div');
+    rr.setAttribute('hidden', e.target.value);
+    ml.setAttribute('hidden', e.target.value);
+    switch (e.target.value) {
+        case 'rr':
+            rr.removeAttribute('hidden');
+            break;
+        case 'mlfq':
+            ml.removeAttribute('hidden');
+            break;
+    }
+})
 
 function fifo(processes) {
-    let arr = [];
+    let arr = new FIFOQueue();
     let time = 0;
     let sequence = new Sequence();
     let nowExecuting = null;
@@ -14,13 +30,13 @@ function fifo(processes) {
     while(processes.length !== 0) {
         for(let i = 0; i < processes.length; i++) {
             if(time === processes[i].arrival) {
-                arr.push(processes[i])
+                arr.enqueue(processes[i])
             }
         }
 
-        if(arr.length === 0) {
+        if(arr.isEmpty()) {
             let lastSeq = sequence.peek();
-            if(lastSeq == null || lastSeq.process == null)
+            if(lastSeq == null || lastSeq.process !== null)
                 sequence.push(new SequenceNode(null, time, time));
             sequence.peek().endTime++;
 
@@ -28,16 +44,19 @@ function fifo(processes) {
             continue;
         }
 
-        if(nowExecuting == null || arr[0] !== nowExecuting) {
-            nowExecuting = arr[0];
+        if(nowExecuting == null) {
+            nowExecuting = arr.execute();
             sequence.push(new SequenceNode(nowExecuting, time, time));
         }
 
         sequence.peek().endTime++;
-        nowExecuting.time--;
-        if(nowExecuting.time === 0) {
-            arr.shift();
-            processes.shift();
+        if(nowExecuting) {
+            nowExecuting.time--;
+            if(nowExecuting.time === 0) {
+                arr.removeEmpty();
+                processes.shift();
+                nowExecuting = null;
+            }
         }
 
         time++;
@@ -47,21 +66,23 @@ function fifo(processes) {
 } 
 
 function srtn(processes) {
-    let arr = [];
+    let arr = new SRTNQueue();
     let time = 0;
     let sequence = new Sequence();
     let nowExecuting = null;
+    let flag = false;
 
     while(processes.length !== 0) {
         for(let i = 0; i < processes.length; i++) {
             if(time === processes[i].arrival) {
-                arr.push(processes[i])
+                arr.enqueue(processes[i])
+                flag = true;
             }
         }
 
-        if(arr.length === 0) {
+        if(arr.isEmpty()) {
             let lastSeq = sequence.peek();
-            if(lastSeq == null || lastSeq.process == null)
+            if(lastSeq == null || lastSeq.process !== null)
                 sequence.push(new SequenceNode(null, time, time));
             sequence.peek().endTime++;
 
@@ -69,27 +90,23 @@ function srtn(processes) {
             continue;
         }
 
-        let min = arr[0];
-        for(let i = 1; i < arr.length; i++) {
-            if(min.time > processes[i].time) {
-                min = arr[i];
-            }
-        }
-
-        if(nowExecuting == null || min !== nowExecuting) {
-            nowExecuting = min;
-            sequence.push(new SequenceNode(nowExecuting, time, time));
+        if(nowExecuting == null || flag) {
+            let prev = nowExecuting;
+            nowExecuting = arr.execute(nowExecuting);
+            if(prev !== nowExecuting) sequence.push(new SequenceNode(nowExecuting, time, time));
+            flag = false;
         }
 
         sequence.peek().endTime++;
-        nowExecuting.time--;
-        if(nowExecuting.time === 0) {
-            let i1 = arr.indexOf(nowExecuting);
-            let i2 = processes.indexOf(nowExecuting);
-            if(i1 !== -1) arr.splice(i1, 1)
-            if(i2 !== -1) processes.splice(i1, 1)
+        if(nowExecuting) {
+            nowExecuting.time--;
+            if(nowExecuting.time === 0) {
+                arr.removeEmpty();
+                let i = processes.indexOf(nowExecuting);
+                if(i !== -1) processes.splice(i, 1)
+                nowExecuting = null;
+            }
         }
-
         time++;
     }
 
@@ -97,58 +114,121 @@ function srtn(processes) {
 }
 
 function roundrobin(processes) {
-    let arr = [];
-    let q = 5;
+    let arr = new RRQueue();
+    let q = parseInt(rrquantumInput.value);
     let time = 0;
     let sequence = new Sequence();
-    let nowExecuting = null, next = null;
+    let nowExecuting = null;
 
     while(processes.length !== 0) {
         for(let i = 0; i < processes.length; i++) {
             if(time === processes[i].arrival) {
-                arr.push(processes[i]);
-                if(arr.indexOf(next) === 0) {
-                    next = arr[arr.length - 1];
-                }
+                arr.enqueue(processes[i]);
             }
         }
 
-        if(arr.length === 0) {
+        if(arr.isEmpty()) {
             let lastSeq = sequence.peek();
-            if(lastSeq == null || !next && lastSeq.process !== null)
+            if(lastSeq == null || lastSeq.process !== null)
                 sequence.push(new SequenceNode(null, time, time));
             sequence.peek().endTime++;
 
             time++;
             continue;
-        } else {
-            if(next == null) next = arr[0];
         }
 
         if(nowExecuting == null || nowExecuting.time === 0 || sequence.peek() !== null && (sequence.peek().executionTime() === q)) {
-            let newNext = (arr.indexOf(next) + 1) % arr.length;
-            nowExecuting = next;
+            nowExecuting = arr.execute();
             sequence.push(new SequenceNode(nowExecuting, time, time));
-
-            if(arr[newNext] === next) {
-                next = null;
-            } else {
-                next = arr[newNext]
-            }
         }
 
         sequence.peek().endTime++;
         if(nowExecuting) {
             nowExecuting.time--;
             if(nowExecuting.time === 0) {
-                let i1 = arr.indexOf(nowExecuting);
-                let i2 = processes.indexOf(nowExecuting);
-                if(i1 !== -1) arr.splice(i1, 1);
-                if(i2 !== -1) processes.splice(i1, 1);
+                arr.removeEmpty();
+                let i = processes.indexOf(nowExecuting);
+                if(i !== -1) processes.splice(i, 1);
+                nowExecuting = null;
             }
         }
         time++;
     }
+    return sequence;
+}
+
+function quantumIsDone(executionTime, quants, priority) {
+    return quants[priority] && quants[priority] === executionTime;
+}
+
+function mlfq(processes) {
+    let arr0, arr1, arr2;
+    let isfifo = document.getElementById('is-fifo').checked;
+    arr0 = new RRQueue(); arr1 = new RRQueue(); arr2 = (isfifo) ? new FIFOQueue() : new SRTNQueue();
+    console.log(arr2);
+    let q0 = parseInt(document.getElementById('q0').value);
+    let q1 = parseInt(document.getElementById('q1').value);
+
+    let time = 0;
+    let sequence = new Sequence();
+    let nowExecuting = null, priority;
+
+    while(processes.length !== 0) {
+        for(let i = 0; i < processes.length; i++) {
+            if(time === processes[i].arrival) {
+                arr0.enqueue(processes[i]);
+            }
+        }
+
+        if(arr0.isEmpty() && arr1.isEmpty() && arr2.isEmpty() && nowExecuting == null) {
+            let lastSeq = sequence.peek();
+            if(lastSeq == null || lastSeq.process !== null)
+                sequence.push(new SequenceNode(null, time, time));
+            sequence.peek().endTime++;
+
+            time++;
+            continue;
+        }
+
+        let contextSwitch = false;
+        if(nowExecuting == null || nowExecuting.time === 0 || priority === 2 || quantumIsDone(sequence.peek().executionTime(), [q0, q1], priority)) {
+            if(!arr0.isEmpty()) {
+                nowExecuting = arr0.execute(true);
+                if(nowExecuting.time > q0) arr1.enqueue(nowExecuting);
+                contextSwitch = true;
+                priority = 0;
+            } else if(!arr1.isEmpty()) {
+                nowExecuting = arr1.execute(true);
+                if(nowExecuting.time > q1) arr2.enqueue(nowExecuting);
+                contextSwitch = true;
+                priority = 1;
+            } else if(!arr2.isEmpty()) {
+                if(priority !== 2 || nowExecuting === null) {
+                    nowExecuting = arr2.execute(nowExecuting);
+                    contextSwitch = true;
+                    priority = 2;
+                }
+            }
+        }
+
+        if(contextSwitch) sequence.push(new SequenceNode(nowExecuting, time, time));
+
+        sequence.peek().endTime++;
+        if(nowExecuting) {
+            nowExecuting.time--;
+            if(nowExecuting.time === 0) {
+                arr0.removeEmpty();
+                arr1.removeEmpty();
+                arr2.removeEmpty();
+
+                let i = processes.indexOf(nowExecuting);
+                if(i !== -1) processes.splice(i, 1);
+                nowExecuting = null;
+            }
+        }
+        time++;
+    }
+
     return sequence;
 }
 
@@ -175,7 +255,7 @@ function solve() {
             if(lprocesses[idx].arrival > lprocesses[j].arrival) {
                 idx = j;
             } else if(lprocesses[idx].arrival === lprocesses[j].arrival) {
-                if(lprocesses[idx].name.localeCompare(lprocesses[idx].name < 0)) {
+                if(lprocesses[idx].name.localeCompare(lprocesses[j].name) > 0) {
                     idx = j;
                 }
             }
@@ -194,6 +274,9 @@ function solve() {
             break;
         case 'rr':
             showResult(roundrobin(lprocesses));
+            break;
+        case 'mlfq':
+            showResult(mlfq(lprocesses));
             break;
     }
 }

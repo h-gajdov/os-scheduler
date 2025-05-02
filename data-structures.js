@@ -1,59 +1,104 @@
-class Node {
-    constructor(data) {
-        this.data = data;
-        this.next = null;
+class Queue {
+    constructor() {
+        this.arr = []
+    }
+
+    isEmpty() {
+        return this.arr.length === 0;
+    }
+
+    removeEmpty() {
+        for(let i = 0; i < this.arr.length; i++) {
+            if(this.arr[i].time === 0) {
+                if(this.next === this.arr[i]) this.next = null;
+                this.arr.splice(i, 1);
+            }
+        }
     }
 }
 
-class Queue {
+class FIFOQueue extends Queue {
     constructor() {
-        this.front = null;  
-        this.rear = null; 
-        this.size = 0; 
+        super();
     }
-    enqueue(data) {
-        const newNode = new Node(data);
-        if (this.isEmpty()) {
-            this.front = newNode;
-            this.rear = newNode;
-        } else {
-            this.rear.next = newNode;
-            this.rear = newNode;
-        }
-        this.size++;
+
+    enqueue(process) {
+        this.arr.push(process);
     }
-    dequeue() {
-        if (this.isEmpty()) {
-            return null; 
-        }
-        const removedNode = this.front;
-        this.front = this.front.next;
-        if (this.front === null) {
-            this.rear = null;
-        }
-        this.size--;
-        return removedNode.data;
+
+    execute() {
+        if(this.isEmpty()) return null;
+        return this.arr[0];
     }
-    peek() {
-        if (this.isEmpty()) {
-            return null;
-        }
-        return this.front.data;
+}
+
+class SRTNQueue extends Queue {
+    constructor() {
+        super();
     }
+
+    enqueue(process) {
+        this.arr.push(process);
+    }
+
+    execute(prev) {
+        if(this.isEmpty()) return null;
+
+        let result = (prev !== null) ? prev : this.arr[0];
+        for(let i = 0; i < this.arr.length; i++) {
+            if(prev !== null && prev.time === this.arr[i].time) continue;
+
+            if(result.time > this.arr[i].time) {
+                result = this.arr[i];
+            } else if(result.time === this.arr[i].time && result.name.localeCompare(this.arr[i].name) > 0) {
+                result = this.arr[i];
+            }
+        }
+        return result;
+    }
+}
+
+class RRQueue extends Queue {
+    constructor() {
+        super();
+        this.next = null;
+        this.looped = false;
+    }
+
+    enqueue(process) {
+        if(this.next == null) this.next = process;
+        else if(this.arr[0] === this.next && this.looped) this.next = process;
+        this.arr.push(process);
+        this.looped = false;
+    }
+
+    execute(pop) {
+        let result = this.next;
+
+        let idx = this.arr.indexOf(this.next);
+        this.next = this.arr[(idx + 1) % this.arr.length];
+        if((idx + 1) % this.arr.length === 0) this.looped = true;
+
+        if(pop) {
+            if(this.next === this.arr[idx]) this.next = null;
+            this.arr.splice(idx, 1);
+        }
+
+        return result;
+    }
+
+    removeEmpty() {
+        for(let i = 0; i < this.arr.length; i++) {
+            if(this.arr[i].time === 0) {
+                if(this.next === this.arr[i]) this.next = null;
+                this.arr.splice(i, 1);
+            }
+        }
+        if(this.arr.length === 0) this.looped = false;
+    }
+
     isEmpty() {
-        return this.size === 0;
-    }
-    getSize() {
-        return this.size;
-    }
-    print() {
-        let current = this.front;
-        const elements = [];
-        while (current) {
-            elements.push(current.data);
-            current = current.next;
-        }
-        console.log(elements.join(' -> '));
+        return this.arr.length === 0;
     }
 }
 
