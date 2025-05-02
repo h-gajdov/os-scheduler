@@ -6,6 +6,8 @@ const resultContainer = document.getElementById('result-container');
 const boxContainer = document.getElementById('box-container');
 const rrquantumInput = document.getElementById('rr-quantum');
 
+const inputTable = document.getElementById('input-table');
+
 algorithmSelect.addEventListener('change', (e) => {
     const rr = document.getElementById('rr-quantum-div');
     const ml = document.getElementById('mlfq-quantum-div');
@@ -232,15 +234,47 @@ function mlfq(processes) {
     return sequence;
 }
 
+class TableParser {
+    constructor(labels, arrivals, bursts) {
+        this.labels = labels;
+        this.arrivals = arrivals;
+        this.bursts = bursts;
+    }
+}
+
+function parseTableInput() {
+    let labels = '';
+    let arrivals = '';
+    let bursts = '';
+
+    let labelInputs = document.querySelectorAll('.label');
+    let arrivalInputs = document.querySelectorAll('.tarrival');
+    let burstInputs = document.querySelectorAll('.texecution');
+
+    for(let i = 0 ; i < labelInputs.length; i++) {
+        labels += labelInputs[i].value + ' ';
+        arrivals += arrivalInputs[i].value + ' ';
+        bursts += burstInputs[i].value + ' ';
+    }
+    return new TableParser(labels.trim(), arrivals.trim(), bursts.trim());
+}
+
 function solve() {
+    let info = parseTableInput();
+
     let algorithm = algorithmSelect.value;
-    let labels = processes.value.split(' ');
-    let arrivals = tarrival.value.split(' ');
+    let labels = info.labels.split(' ');
+    let arrivals = info.arrivals.split(' ');
     for(let i = 0; i < arrivals.length; i++)
         arrivals[i] = parseInt(arrivals[i]);
-    let executions = texecution.value.split(' ');
+    let executions = info.bursts.split(' ');
     for(let i = 0; i < executions.length; i++)
         executions[i] = parseInt(executions[i]);
+
+    console.log(algorithm);
+    console.log(labels);
+    console.log(arrivals);
+    console.log(executions);
 
     let lprocesses = [];
 
@@ -323,4 +357,22 @@ function fillTable(sequence) {
             <td>${turnaround}</td>
         `
     }
+}
+
+function addNewProcess() {
+    const tbody = inputTable.querySelector('tbody');
+    const row = document.createElement('tr');
+    row.innerHTML = `<td><input class="label"></td>
+                        <td><input class="tarrival" type="number"></td>
+                        <td><input class="texecution" type="number"></td>
+                        <td>
+                            <button class="min-pl-button" onclick="deleteProcess(this)">-</button>
+                        </td>`;
+
+    tbody.appendChild(row);
+}
+
+function deleteProcess(element) {
+    let row = element.parentElement.parentElement;
+    row.parentElement.removeChild(row);
 }

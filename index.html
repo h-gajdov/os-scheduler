@@ -1,83 +1,110 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Scheduler Calculator</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <label>
-        Algorithm:
-        <select id="dropdown-algorithm">
-            <option value="fifo">First-Come First-Served</option>
-            <option value="srtn">Shortest Remaining Time Next</option>
-            <option value="rr">Round Robin</option>
-            <option value="mlfq">Multilevel Feedback Queues</option>
-        </select>
-    </label>
-    
-    <label>
-        Processes:
-        <input id="processes" type="text" placeholder="A B C D E...">
-    </label>
+    <div id="grid-container">
+        <div class="section">
+            <h1>Input</h1>
 
-    <label>
-        Time of arrival:
-        <input id="tarrival" type="text" placeholder="1 2 3 4 5...">
-    </label>
+            <div class="input-container">
+                <div class="custom-select-wrapper">
+                    <select id="dropdown-algorithm">
+                        <option value="fifo">First-Come First-Served</option>
+                        <option value="srtn">Shortest Remaining Time Next</option>
+                        <option value="rr">Round Robin</option>
+                        <option value="mlfq">Multilevel Feedback Queues</option>
+                    </select>
+                </div>
+                <br>
 
-    <label>
-        Execution time:
-        <input id="texecution" type="text" placeholder="1 2 3 4 5...">
-    </label>
+                <div hidden id="rr-quantum-div">
+                    <label>
+                        Quantum:
+                        <input id="rr-quantum" type="number" placeholder="1">
+                    </label>
+                </div>
 
-    <div hidden id="rr-quantum-div">
-        <label>
-            Quantum:
-            <input id="rr-quantum" type="number" placeholder="1">
-        </label>
-    </div>
+                <div id="mlfq-quantum-div" hidden>
+                    <label>
+                        Quantum for Q0:
+                        <input id="q0" type="number" placeholder="1">
+                    </label>
+                    <label>
+                        Quantum for Q1:
+                        <input id="q1" type="number" placeholder="1">
+                    </label>
+                    <label>
+                        FIFO:
+                        <input id="is-fifo" type="checkbox">
+                    </label>
+                </div>
 
-    <div id="mlfq-quantum-div" hidden>
-        <label>
-            Quantum for Q0:
-            <input id="q0" type="number" placeholder="1">
-        </label>
-        <label>
-            Quantum for Q1:
-            <input id="q1" type="number" placeholder="1">
-        </label>
-        <label>
-            FIFO:
-            <input id="is-fifo" type="checkbox">
-        </label>
-    </div>
+                <table id="input-table">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Arrival Time</th>
+                        <th>Burst Time</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><input class="label"></td>
+                        <td><input class="tarrival" type="number"></td>
+                        <td><input class="texecution" type="number"></td>
+                        <td>
+                            <button class="min-pl-button" onclick="deleteProcess(this)">-</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <td colspan="4">
+                            <button class="min-pl-button" onclick="addNewProcess()">+</button>
+                        </td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
 
-    <button onclick="solve()">Solve</button>
-
-    <div id="result-container">
-        <div id="box-container">
-<!--            <div class="empty"></div>-->
-<!--            <div class="box">-->
-<!--                <span class="label">A</span>-->
-<!--                <span class="start-time">1</span>-->
-<!--                <span class="end-time">2</span>-->
-<!--            </div>-->
+            <div class="solve-button-wrapper">
+                <button id="solve" onclick="solve()">Solve</button>
+            </div>
         </div>
-        <div id="line"></div>
-        <table>
-            <tr>
-                <th>Process</th>
-                <th>Response Time</th>
-                <th>Waiting Time</th>
-                <th>Turnaround Time</th>
-            </tr>
-        </table>
+        <div class="section">
+            <h1>Output</h1>
+
+            <div id="result-container">
+                <div id="box-container">
+                    <!--            <div class="empty"></div>-->
+                    <!--            <div class="box">-->
+                    <!--                <span class="label">A</span>-->
+                    <!--                <span class="start-time">1</span>-->
+                    <!--                <span class="end-time">2</span>-->
+                    <!--            </div>-->
+                </div>
+                <div id="line"></div>
+                <table>
+                    <tr>
+                        <th>Process</th>
+                        <th>Response Time</th>
+                        <th>Waiting Time</th>
+                        <th>Turnaround Time</th>
+                    </tr>
+                </table>
+            </div>
+        </div>
     </div>
 
-    <script src="data-structures.js"></script>
-    <script src="process.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scheduler Calculator</title>
+    <link rel="stylesheet" href="old_style.css">
+</head>
+<body>
+    <label>
+        Algorithm:
+        <select id="dropdown-algorithm">
+            <option value="fifo">First-Come First-Served</option>
+            <option value="srtn">Shortest Remaining Time Next</option>
+            <option value="rr">Round Robin</option>
+            <option value="mlfq">Multilevel Feedback Queues</option>
+        </select>
+    </label>
+    
+    <label>
+        Processes:
+        <input id="processes" type="text" placeholder="A B C D E...">
+    </label>
+
+    <label>
+        Time of arrival:
+        <input id="tarrival" type="text" placeholder="1 2 3 4 5...">
+    </label>
+
+    <label>
+        Execution time:
+        <input id="texecution" type="text" placeholder="1 2 3 4 5...">
+    </label>
+
+    <div hidden id="rr-quantum-div">
+        <label>
+            Quantum:
+            <input id="rr-quantum" type="number" placeholder="1">
+        </label>
+    </div>
+
+    <div id="mlfq-quantum-div" hidden>
+        <label>
+            Quantum for Q0:
+            <input id="q0" type="number" placeholder="1">
+        </label>
+        <label>
+            Quantum for Q1:
+            <input id="q1" type="number" placeholder="1">
+        </label>
+        <label>
+            FIFO:
+            <input id="is-fifo" type="checkbox">
+        </label>
+    </div>
+
+    <button onclick="solve()">Solve</button>
+
+    <div id="result-container">
+        <div id="box-container">
+<!--            <div class="empty"></div>-->
+<!--            <div class="box">-->
+<!--                <span class="label">A</span>-->
+<!--                <span class="start-time">1</span>-->
+<!--                <span class="end-time">2</span>-->
+<!--            </div>-->
+        </div>
+        <div id="line"></div>
+        <table>
+            <tr>
+                <th>Process</th>
+                <th>Response Time</th>
+                <th>Waiting Time</th>
+                <th>Turnaround Time</th>
+            </tr>
+        </table>
+    </div>
+
+    <script src="data-structures.js"></script>
+    <script src="process.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
