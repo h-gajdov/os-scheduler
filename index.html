@@ -65,6 +65,38 @@
                             <button class="min-pl-button" onclick="deleteProcess(this)">-</button>
                         </td>
                     </tr>
+                    <tr>
+                        <td><input class="label"></td>
+                        <td><input class="tarrival" type="number"></td>
+                        <td><input class="texecution" type="number"></td>
+                        <td>
+                            <button class="min-pl-button" onclick="deleteProcess(this)">-</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input class="label"></td>
+                        <td><input class="tarrival" type="number"></td>
+                        <td><input class="texecution" type="number"></td>
+                        <td>
+                            <button class="min-pl-button" onclick="deleteProcess(this)">-</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input class="label"></td>
+                        <td><input class="tarrival" type="number"></td>
+                        <td><input class="texecution" type="number"></td>
+                        <td>
+                            <button class="min-pl-button" onclick="deleteProcess(this)">-</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input class="label"></td>
+                        <td><input class="tarrival" type="number"></td>
+                        <td><input class="texecution" type="number"></td>
+                        <td>
+                            <button class="min-pl-button" onclick="deleteProcess(this)">-</button>
+                        </td>
+                    </tr>
                     </tbody>
                     <tfoot>
                     <tr>
@@ -80,31 +112,38 @@
                 <button id="solve" onclick="solve()">Solve</button>
             </div>
         </div>
-        <div class="section">
+        <div class="section output-section" style="visibility: hidden;">
             <h1>Output</h1>
 
             <div id="result-container">
                 <div id="box-container">
-                    <!--            <div class="empty"></div>-->
-                    <!--            <div class="box">-->
-                    <!--                <span class="label">A</span>-->
-                    <!--                <span class="start-time">1</span>-->
-                    <!--                <span class="end-time">2</span>-->
-                    <!--            </div>-->
+                    <!--                    <div class="empty"></div>-->
+                    <!--                    <div class="box">-->
+                    <!--                        <span class="box-label">A</span>-->
+                    <!--                        <span class="start-time">1</span>-->
+                    <!--                        <span class="end-time">2</span>-->
+                    <!--                    </div>-->
                 </div>
                 <div id="line"></div>
-                <table>
+            </div>
+            <table id="output-table">
+                <thead>
                     <tr>
                         <th>Process</th>
                         <th>Response Time</th>
                         <th>Waiting Time</th>
                         <th>Turnaround Time</th>
                     </tr>
-                </table>
-            </div>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
         </div>
     </div>
 
+    <script src="process.js"></script>
+    <script src="data-structures.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

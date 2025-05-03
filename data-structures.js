@@ -152,9 +152,24 @@ class Sequence {
         return this.hash.get(process)[0].startTime - process.arrival;
     }
 
+    getSequenceExecutingAtTime(time) {
+        for(let i = 0; i < this.sequence.length; i++) {
+            if(time >= this.sequence[i].startTime && time <= this.sequence[i].endTime) {
+                return this.sequence[i];
+            }
+        }
+    }
+
     getWaitingTimeOfProcess(process) {
         let sequences = this.hash.get(process);
-        let result = sequences[0].startTime;
+        let result = 0;
+
+        let initial = process.arrival;
+        let atTime = this.getSequenceExecutingAtTime(initial);
+        if(atTime.process !== process) {
+            result += sequences[0].startTime - initial;
+        }
+
         for(let i = 0; i < sequences.length - 1; i++) {
             result += sequences[i + 1].startTime - sequences[i].endTime;
         }

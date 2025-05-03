@@ -68,20 +68,58 @@ option {
 }
 
 table {
-    border-collapse: collapse;
+    border-collapse:separate;
+    border-spacing: 0;
     margin: auto;
     margin-top: 40px;
 }
 
 td, th {
-    border: 1px solid black;
+    border-left:1px solid black;
+    border-top:1px solid black;
     padding: 5px;
     text-align: center;
     font-size: 20px;
     background: #FAFAFA;
 }
 
-td:last-child {
+table thead th {
+    border-top: 1px solid black;
+}
+
+table thead th:first-child {
+    border-left: 1px solid black;
+    border-top-left-radius: 7px;
+}
+
+table thead th:last-child {
+    border-right: 1px solid black;
+    border-top-right-radius: 7px;
+}
+
+table tbody tr:last-child td {
+    border-bottom: 1px solid black;
+}
+
+table tbody tr td:last-child,
+#input-table tbody tr td:nth-last-child(2) {
+    border-right: 1px solid black;
+}
+
+table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 7px;
+}
+
+table tbody tr:last-child td:last-child,
+#input-table tbody tr:last-child td:nth-last-child(2) {
+    border-bottom-right-radius: 7px;
+}
+
+th {
+    border-top: none;
+}
+
+#input-table td:last-child {
     border: none;
     background: none;
 }
@@ -160,3 +198,67 @@ label {
     width: 100%;
     height: 1px;
 }
+
+#box-container {
+    display: flex;
+}
+
+.box {
+    display: grid;
+    grid-template-columns: auto auto;
+
+    row-gap: 32%;
+
+    justify-items: center;
+    justify-content: space-between;
+
+    border: 1px solid black;
+    border-bottom: 0;
+    border-right: none;
+    min-width: 48px;
+    height: 32px;
+    background: lightgrey;
+}
+
+.box-label {
+    margin-top: 13%;
+    color: white;
+}
+
+.empty {
+    min-width: 48px;
+    height: 32px;
+}
+
+.box:last-of-type {
+    border-right: 1px solid black;
+}
+
+.box + .empty {
+    border-left: 1px solid black;
+}
+
+.box-label {
+    grid-column: 1 / span 2;
+}
+
+.box + .box .start-time {
+    visibility: hidden;
+}
+
+.start-time {
+    position: relative;
+    left: -6px;
+}
+.end-time {
+    position: relative;
+    left: 6px;
+}
+
+.output-section {
+    display: flex;
+    flex-direction: column;
+}
+
+.output-section h1 {flex-grow: 0.15;}
+.output-section > div {flex-grow: 0.33;}

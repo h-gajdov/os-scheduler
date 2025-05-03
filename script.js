@@ -1,8 +1,4 @@
 const algorithmSelect = document.getElementById('dropdown-algorithm');
-const processes = document.getElementById('processes');
-const tarrival = document.getElementById('tarrival');
-const texecution = document.getElementById('texecution');
-const resultContainer = document.getElementById('result-container');
 const boxContainer = document.getElementById('box-container');
 const rrquantumInput = document.getElementById('rr-quantum');
 
@@ -260,6 +256,9 @@ function parseTableInput() {
 }
 
 function solve() {
+    let out = document.querySelector('.output-section');
+    if(out.style.visibility === 'hidden') out.style.visibility = 'unset';
+
     let info = parseTableInput();
 
     let algorithm = algorithmSelect.value;
@@ -271,15 +270,10 @@ function solve() {
     for(let i = 0; i < executions.length; i++)
         executions[i] = parseInt(executions[i]);
 
-    console.log(algorithm);
-    console.log(labels);
-    console.log(arrivals);
-    console.log(executions);
-
     let lprocesses = [];
 
     for(let i = 0; i < labels.length; i++) {
-        lprocesses.push(new Process(labels[i], arrivals[i], executions[i]));
+        lprocesses.push(new Process(labels[i], arrivals[i], executions[i], colors[i % colors.length]));
     }
 
     //SORT ACCORDING TO ARRIVAL
@@ -328,10 +322,11 @@ function showResult(sequence) {
 
         if(c !== 'empty') {
             div.innerHTML = `
-                <span class="label">${proc.name}</span>
+                <span class="box-label">${proc.name}</span>
                 <span class="start-time">${sequence.sequence[i].startTime}</span>
                 <span class="end-time">${sequence.sequence[i].endTime}</span>
         `
+            div.style.background = proc.color;
         }
         boxContainer.appendChild(div);
     }
@@ -339,11 +334,11 @@ function showResult(sequence) {
 }
 
 function fillTable(sequence) {
-    let table = document.querySelector('table');
+    let table = document.querySelector('#output-table tbody');
     let processes = sequence.getProcesses();
 
     //clear table
-    table.innerHTML =`<tr><th>Process</th><th>Response Time</th><th>Waiting Time</th><th>Turnaround Time</th></tr>`
+    table.innerHTML = '';
 
     for(let i = 0; i < processes.length; i++) {
         let proc = processes[i];
